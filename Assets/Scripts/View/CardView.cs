@@ -14,6 +14,7 @@ public class CardView : MonoBehaviour
     {
         valueText.text = cardModel.CardValue.ToString();
         cardImage.enabled = cardModel.FacedUp;
+        
     }
 
 }
