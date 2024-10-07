@@ -1,4 +1,6 @@
 
+using System;
+
 public class Card 
 {
     public CardValue CardValue { get; set; }  // Номинал карты
@@ -24,30 +26,4 @@ public class Card
 
 
 
-}
-
-
-public enum CardSuit
-{
-    Spades,  // Пики
-    Hearts,  // Черви
-    Clubs,   // Трефы
-    Diamonds // Бубны
-}
-
-public enum CardValue
-{
-    Two,
-    Three,
-    Four,
-    Five,
-    Six, 
-    Seven, 
-    Eight, 
-    Nine, 
-    Ten, 
-    Jack, 
-    Queen, 
-    King, 
-    Ace
 }
