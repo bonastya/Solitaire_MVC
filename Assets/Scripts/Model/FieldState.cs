@@ -10,20 +10,7 @@ public class FieldState
 
     public int CardNumber { get;  set; }
 
-
-/*    public int CardValuesNumber { get; set; }
-    public CardValue[] CardValues { get; set; }
-
-    public int CardSuitsNumber { get; set; }
-    public CardSuit[] CardSuits { get; set; }*/
-
-
-
-
-
     public List<Card> Bank { get; private set; }               // Банк карт
-
-
 
     public bool IFcardsPositionedCorrectly;
 

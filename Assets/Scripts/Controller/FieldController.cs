@@ -1,22 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using System.Linq;
-using Unity.VisualScripting;
-using Unity.IO.LowLevel.Unsafe;
 
 public class FieldController : MonoBehaviour
 {
-
     public List<List<RectTransform>> cardsGroups;          // Список групп карт
     public RectTransform[] cards;                          // Список карт на поле
     public FieldState fieldState;
-
-
-    //public List<List<Card>> cardsGroupsModel;              // Список групп карт (Model)
-
 
     void Start()
     {
@@ -25,28 +16,32 @@ public class FieldController : MonoBehaviour
         fieldState = new FieldState();
         fieldState.CardNumber = cards.Length;
 
-/*        fieldState.CardValues = Enum.GetValues(typeof(CardValue)) as CardValue[];
-        fieldState.CardValuesNumber = fieldState.CardValues.Length;
-
-        fieldState.CardSuits = Enum.GetValues(typeof(CardSuit)) as CardSuit[];
-        fieldState.CardSuitsNumber = fieldState.CardSuits.Length;*/
-
-
-
         GroupCards();
         SetGroupsHierarchy();
         MakeGameCombinations();
 
 
+        /*        foreach (List<Card> cardsGroupModel in fieldState.CardGroups)
+                {
+                    print("Num: " + cardsGroupModel.Count);
+                    foreach (Card card in cardsGroupModel)
+                    {
+                        print("Card " + card.CardView.gameObject.name);
+                        print("Parent " + (card.Parent != null ? card.Parent.CardView.gameObject.name : "null"));
+                        print("Child " + (card.Child != null ? card.Child.CardView.gameObject.name : "null"));
+                        print("-----");
+                    }
+                    print("---------------------------");
+                }*/
 
-/*        foreach (List<Card> cardsGroupModel in fieldState.CardGroups)
+
+        /*foreach (List < (CardValue, CardSuit)> cardsCombination in fieldState.CardCombinations)
         {
-            print("Num: " + cardsGroupModel.Count);
-            foreach (Card card in cardsGroupModel)
+            print("Num: " + cardsCombination.Count);
+            foreach ((CardValue, CardSuit) card in cardsCombination)
             {
-                print("Card " + card.CardView.gameObject.name);
-                print("Parent " + (card.Parent != null ? card.Parent.CardView.gameObject.name : "null"));
-                print("Child " + (card.Child != null ? card.Child.CardView.gameObject.name : "null"));
+                print("Value " + card.Item1);
+                print("Suit " + card.Item2);
                 print("-----");
             }
             print("---------------------------");
@@ -54,6 +49,8 @@ public class FieldController : MonoBehaviour
 
 
     }
+
+
 
     private void MakeGameCombinations()
     {
@@ -65,33 +62,37 @@ public class FieldController : MonoBehaviour
         bool directionChange = false;     // будет ли изменение направления
         int directionChangeCard = 0;      // на какой карте изменяется направление
 
-        CardValue сardValue = 0;
-        CardSuit сardSuit = 0;
+        CardValue cardValue = 0;
+        CardSuit cardSuit = 0;
+
+        fieldState.CardCombinations.Clear();
 
         while (distributedCards < fieldState.CardNumber)
         {
             // определение параметров комбинации
-
             // длинна от 2х до 7 или сколько осталось
             combinationLength = UnityEngine.Random.Range(2, Math.Min(8, fieldState.CardNumber-distributedCards+1));
 
             combinationDirection = (UnityEngine.Random.Range(0f, 1f) <= 0.65) ? 1 : -1;
             directionChange = UnityEngine.Random.Range(0f, 1f) <= 0.15;
-
-            if (directionChange && combinationLength>2) // определяем на какой карте меняется направление - если оно должно меняться и это возможно (карт больше 2х)
+            // определяем на какой карте меняется направление - если оно должно меняться и это возможно (карт больше 2х)
+            if (directionChange && combinationLength>2) 
             {
                 directionChangeCard = UnityEngine.Random.Range(3, combinationLength+1); 
             }
 
             // значения первой карты комбинации
-            сardValue = (CardValue)UnityEngine.Random.Range(0, GameDesignData.CardValuesNumber);//todo
-            сardSuit = GameDesignData.RandomSuit();
+            cardValue = GameDesignData.RandomValue();
+            cardSuit = GameDesignData.RandomSuit();
 
             // Кортеж значений комбинации
             List<(CardValue, CardSuit)> cardValues = new List<(CardValue, CardSuit)>(); 
 
-            cardValues.Add((сardValue, сardSuit));
+            cardValues.Add((cardValue, cardSuit));
 
+
+            // Текущее значение и масть карты
+            (CardValue, CardSuit) cardValueAndSuit = new();
 
             for (int i = 1; i < combinationLength; i++)
             {
@@ -100,21 +101,9 @@ public class FieldController : MonoBehaviour
                 {
                     combinationDirection = -combinationDirection;
                 }
-
-                // в зависимости от направления берём предыдущую или следующую карту
-                if (combinationDirection == 1)
-                {
-                    сardValue = GameDesignData.GetNextCardValue(сardValue);
-                }
-                else
-                {
-                    сardValue = GameDesignData.GetPreviousCardValue(сardValue);
-                }
-
-                // масть - случайная
-                сardSuit = GameDesignData.RandomSuit();
-
-                cardValues.Add((сardValue, сardSuit));
+                cardValueAndSuit = MakeNextCardValueAndSuit(cardValue, combinationDirection);
+                cardValue = cardValueAndSuit.Item1;
+                cardValues.Add(cardValueAndSuit);
             }
 
             // если остаётся 1 последний то его нужно или присоединить к предыдущей комбинации (если она не 7)
@@ -123,20 +112,9 @@ public class FieldController : MonoBehaviour
             {
                 if (combinationLength < 7)
                 {
-                    // в зависимости от направления берём предыдущую или следующую карту
-                    if (combinationDirection == 1)
-                    {
-                        сardValue = GameDesignData.GetNextCardValue(сardValue);
-                    }
-                    else
-                    {
-                        сardValue = GameDesignData.GetPreviousCardValue(сardValue);
-                    }
-
-                    // масть - случайная
-                    сardSuit = GameDesignData.RandomSuit();
-
-                    cardValues.Add((сardValue, сardSuit));
+                    cardValueAndSuit = MakeNextCardValueAndSuit(cardValue, combinationDirection);
+                    cardValue = cardValueAndSuit.Item1;
+                    cardValues.Add(cardValueAndSuit);
                     combinationLength++;
                 }
                 else
@@ -144,7 +122,6 @@ public class FieldController : MonoBehaviour
                     cardValues.Remove(cardValues.Last());
                     combinationLength--;
                 }
-
             }
 
             fieldState.CardCombinations.Add(cardValues);
@@ -152,29 +129,25 @@ public class FieldController : MonoBehaviour
 
         }
 
-
-
-
-
-
-        // сделать проверку чтобы не оставалась 1 карта в конце
-        // чтобы комбинация не вылезала за колличество карт
-        // вынести рандом масти в геймдизайн
-        // fieldState.CardValues уже в геймдизайне, убрать из FieldState
-
-
     }
 
 
+    private (CardValue, CardSuit) MakeNextCardValueAndSuit(CardValue cardValue, int combinationDirection)
+    {
+        CardValue nextCardValue;
+        // в зависимости от направления берём предыдущую или следующую карту
+        if (combinationDirection == 1)
+        {
+            nextCardValue = GameDesignData.GetNextCardValue(cardValue);
+        }
+        else
+        {
+            nextCardValue = GameDesignData.GetPreviousCardValue(cardValue);
+        }
 
-
-
-
-
-
-
-
-
+        // масть - случайная
+        return (nextCardValue, GameDesignData.RandomSuit());
+    }
 
 
     private void GroupCards()

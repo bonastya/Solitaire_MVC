@@ -48,6 +48,10 @@ public static class GameDesignData
     {
         return (CardSuit)UnityEngine.Random.Range(0, CardSuitsNumber);
     }
+    public static CardValue RandomValue()
+    {
+        return (CardValue)UnityEngine.Random.Range(0, CardValuesNumber);
+    }
 
 
 
