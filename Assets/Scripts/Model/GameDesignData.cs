@@ -4,10 +4,10 @@ public static class GameDesignData
 {
     public const int  NUM_OF_CARDS = 40;                   // Количество карт которое должно быть на поле
 
-    public const int MIN_COMB = 2;                 // Минимальное количество карт в комбинации
-    public const int MAX_COMB = 7;                 // Максимальное количество карт в комбинации
-    public const float increasing_combination = 0.65f ;   // Вероятность возрастающей комбинации
-    public const float change_direction = 0.15f;         // Вероятность изменения направлениия комбинации
+    public const int MIN_COMB = 2;                         // Минимальное количество карт в комбинации
+    public const int MAX_COMB = 7;                         // Максимальное количество карт в комбинации
+    public const float increasing_combination = 0.65f ;    // Вероятность возрастающей комбинации
+    public const float change_direction = 0.15f;           // Вероятность изменения направлениия комбинации
 
 
     // статичные массивы формируются из enum CardValue и enum CardSuit
@@ -52,9 +52,6 @@ public static class GameDesignData
     {
         return (CardValue)UnityEngine.Random.Range(0, CardValuesNumber);
     }
-
-
-
 
 }
 

@@ -16,6 +16,7 @@ public class FieldState
 
     public FieldState() {
         CardGroups = new List<List<Card>>();
+        Bank = new List<Card>();
         CardCombinations = new List<List<(CardValue, CardSuit)>>();
     }
 

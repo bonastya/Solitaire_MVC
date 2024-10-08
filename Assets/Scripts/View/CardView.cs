@@ -4,14 +4,13 @@ using UnityEngine.UI;
 
 public class CardView : MonoBehaviour
 {
-    public TMP_Text valueText; // Текст номинала карты
-    public Image cardImage;    // Изображение карты
-
-    public void UpdateView(Card cardModel)
+    private Image cardImage;    // Изображение карты
+    private void Awake()
     {
-        valueText.text = cardModel.CardValue.ToString();
-        cardImage.enabled = cardModel.FacedUp;
-        
+        cardImage= GetComponent<Image>();
     }
-
+    public void SetSprite(Sprite sprite)
+    {
+        cardImage.sprite = sprite; 
+    }
 }

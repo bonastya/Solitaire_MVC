@@ -11,18 +11,23 @@ public class Card
     public Card? Child { get; set; }        // Потомок карты
     #nullable disable
 
-    public bool FacedUp  { get; set; } = false;        // Повернута ли
+    public bool FacedUp  { get; set; } = true;        // Повернута ли
 
     public CardView CardView { get; set; }         // View
 
 
-
-/*    Card(Card? parent, Card? child)
+    public Card()
     {
-        Parent = parent;
-        Child = child;
-        FacedUp = false;
-    }*/
+        
+    }
+    public Card(/*Card? parent, Card? child,*/ CardValue cardValue, CardSuit cardSuit)
+    {
+        /*Parent = parent;
+        Child = child;*/
+        FacedUp = true;
+        CardValue = cardValue;
+        CardSuit = cardSuit;
+    }
 
 
 

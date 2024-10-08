@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+[RequireComponent(typeof(CardSpriteManager))]
 public class FieldController : MonoBehaviour
 {
     public List<List<RectTransform>> cardsGroups;          // Список групп карт
     public RectTransform[] cards;                          // Список карт на поле
     public FieldState fieldState;
 
+    private CardSpriteManager cardSpriteManager;
+
     void Start()
     {
+        cardSpriteManager = GetComponent<CardSpriteManager>();
+
         cardsGroups = new List<List<RectTransform>>();
 
         fieldState = new FieldState();
@@ -19,6 +24,8 @@ public class FieldController : MonoBehaviour
         GroupCards();
         SetGroupsHierarchy();
         MakeGameCombinations();
+        DistributeCombinationsToCardsGroups();
+
 
 
         /*        foreach (List<Card> cardsGroupModel in fieldState.CardGroups)
@@ -35,21 +42,67 @@ public class FieldController : MonoBehaviour
                 }*/
 
 
-        /*foreach (List < (CardValue, CardSuit)> cardsCombination in fieldState.CardCombinations)
+        foreach (List<(CardValue, CardSuit)> cardsCombination in fieldState.CardCombinations)
         {
             print("Num: " + cardsCombination.Count);
             foreach ((CardValue, CardSuit) card in cardsCombination)
             {
-                print("Value " + card.Item1);
-                print("Suit " + card.Item2);
-                print("-----");
+                print("card "+card.Item1 + card.Item2);
             }
             print("---------------------------");
-        }*/
+        }
 
 
     }
+    private void DistributeCombinationsToCardsGroups()
+    {
+        // доступные слоты карт в группах
+        int[] availableGroupsSlots = new int[fieldState.CardGroups.Count];
+        int[] groupsFullness = new int[fieldState.CardGroups.Count];
 
+        for (int i = 0; i < availableGroupsSlots.Length; i++)
+        {
+            availableGroupsSlots[i]= fieldState.CardGroups[i].Count;
+            groupsFullness[i] = 0;
+        }
+
+        int groupNum; // номер группы куда распределяем текущую карту
+        Card currentCard;
+
+        // для каждой комбинации
+        foreach (List<(CardValue, CardSuit)> cardsCombination in fieldState.CardCombinations) 
+        {
+            print("комбинация");
+            // первую карту в банк
+            fieldState.Bank.Add(new Card(cardsCombination[0].Item1, cardsCombination[0].Item2));
+            print("в банк" + cardsCombination[0].Item1+ cardsCombination[0].Item2);
+            // остальные раскидываем по группам с конца
+            for (int i = cardsCombination.Count-1; i>0; i--)
+            {
+                groupNum = UnityEngine.Random.Range(0, fieldState.CardGroups.Count);
+                while (groupsFullness[groupNum] == availableGroupsSlots[groupNum]) // найти незаполненную группу
+                {
+                    groupNum = UnityEngine.Random.Range(0, fieldState.CardGroups.Count);
+                }
+
+                currentCard = fieldState.CardGroups[groupNum][groupsFullness[groupNum]];
+                currentCard.CardValue = cardsCombination[i].Item1;
+                currentCard.CardSuit = cardsCombination[i].Item2;
+
+                cardSpriteManager.UpdateView(currentCard, currentCard.CardView); // возможно вынести в отдельный проход
+                print("карта комбинации " + i + cardsCombination[i].Item1 + cardsCombination[i].Item2);
+                print("заполняется в группу " + groupNum+"в объект "+ currentCard.CardView.gameObject);
+                groupsFullness[groupNum]++;
+
+            }
+            fieldState.Bank.Reverse();
+
+
+        }
+
+
+
+    }
 
 
     private void MakeGameCombinations()
@@ -108,7 +161,7 @@ public class FieldController : MonoBehaviour
 
             // если остаётся 1 последний то его нужно или присоединить к предыдущей комбинации (если она не 7)
             // или откусить от последней 1 и сделать пару
-            if(fieldState.CardNumber - ( distributedCards + combinationLength ) == 1)
+            if(fieldState.CardNumber - ( distributedCards + combinationLength-1 ) == 1) // -1 так как одна карта уйдёт в банк
             {
                 if (combinationLength < 7)
                 {
@@ -123,9 +176,9 @@ public class FieldController : MonoBehaviour
                     combinationLength--;
                 }
             }
-
+            print(combinationDirection);
             fieldState.CardCombinations.Add(cardValues);
-            distributedCards += combinationLength;
+            distributedCards += combinationLength-1;// -1 так как одна карта уйдёт в банк
 
         }
 
@@ -225,8 +278,12 @@ public class FieldController : MonoBehaviour
                 cardModel.Parent = groupModel[i - 1];
                 groupModel[i - 1].Child = cardModel;
 
-                // Оставить ссылку на View
-                cardModel.CardView = cardsGroup[i].GetComponent<CardView>();
+                // Оставить ссылку на View, если нет - добавить компонент
+                if (!cardsGroup[i].gameObject.TryGetComponent<CardView>(out CardView cardView))
+                {
+                    cardView = cardsGroup[i].gameObject.AddComponent<CardView>();
+                }
+                cardModel.CardView = cardView;
 
                 groupModel.Add(cardModel);
 
