@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using Unity.IO.LowLevel.Unsafe;
 
 [RequireComponent(typeof(CardSpriteManager))]
 public class FieldController : MonoBehaviour
@@ -12,6 +13,7 @@ public class FieldController : MonoBehaviour
     public FieldState fieldState;
 
     private CardSpriteManager cardSpriteManager;
+    private CardController cardController;
 
     public GameObject cardPrefab;
     public Transform bankPanel;
@@ -21,6 +23,8 @@ public class FieldController : MonoBehaviour
     void Start()
     {
         cardSpriteManager = GetComponent<CardSpriteManager>();
+        cardController = new CardController(); 
+        cardController.cardSpriteManager = cardSpriteManager;
 
         cardsGroups = new List<List<RectTransform>>();
 
@@ -31,9 +35,10 @@ public class FieldController : MonoBehaviour
         SetGroupsHierarchy();
         MakeGameCombinations();
         DistributeCombinationsToCardsGroups();
-
+        
         SpavnBankCards();
 
+        UnlockTopCards();
 
         /*        foreach (List<Card> cardsGroupModel in fieldState.CardGroups)
                 {
@@ -71,21 +76,25 @@ public class FieldController : MonoBehaviour
             card.GetComponent<RectTransform>().anchoredPosition = new Vector2(position, 0f);
             position += cardOffset;
 
-            // Оставить ссылку на View, если нет - добавить компонент
-            if (card.TryGetComponent<CardView>(out CardView cardView))
-            {
-                cardView = card.AddComponent<CardView>();
-            }
-            bankCard.CardView = cardView;
-            cardSpriteManager.UpdateView(bankCard, bankCard.CardView);
-
-            bankCard.CardView.cardButton.onClick.AddListener(()=> ValidateCardInput(bankCard));
+            cardController.InitCardView(card, bankCard);
+            cardController.UpdateView(bankCard);
+            cardController.AddOnClickListener(bankCard, () => BankInput(bankCard));
         }
 
 
         fieldState.currentCard = fieldState.Bank.Last();
-        fieldState.currentCard.CardView.GoToCombinationPlace(combinationPanel, () => SendCardToCombinationPlace(fieldState.currentCard));
 
+    }
+
+    private void UnlockTopCards()
+    {
+        foreach(List<Card> group in fieldState.CardGroups)
+        {
+            cardController.UnlockCard(group.Last());
+        }
+        cardController.UnlockCard(fieldState.currentCard);
+        cardController.AnimateToCombinationPlace(fieldState.currentCard, combinationPanel);
+        cardController.UnlockBanckCard(fieldState.currentCard.Parent);
     }
 
     private void ValidateCardInput(Card card)
@@ -94,20 +103,17 @@ public class FieldController : MonoBehaviour
             GameDesignData.GetPreviousCardValue(card.CardValue) == fieldState.currentCard.CardValue)
         {
             fieldState.currentCard = card;
-            card.CardView.GoToCombinationPlace(combinationPanel, () => SendCardToCombinationPlace(card));
+            cardController.UnlockParentCard(card);
+            cardController.AnimateToCombinationPlace(card, combinationPanel);
         }
-        
     }
 
-    private void SendCardToCombinationPlace(Card card)
+    private void BankInput(Card card)
     {
-        card.CardView.gameObject.transform.SetParent(combinationPanel);
-        card.CardView.cardButton.onClick.RemoveAllListeners();
-
+        fieldState.currentCard = card;
+        cardController.UnlockParentBankCard(card);
+        cardController.AnimateBankToCombinationPlace(card, combinationPanel);
     }
-
-
-
 
 
     private void DistributeCombinationsToCardsGroups()
@@ -130,7 +136,8 @@ public class FieldController : MonoBehaviour
         {
             print("комбинация");
             // первую карту в банк
-            fieldState.Bank.Add(new Card(cardsCombination[0].Item1, cardsCombination[0].Item2));
+            fieldState.Bank.Add(new Card(cardsCombination[0].Item1, cardsCombination[0].Item2, fieldState.Bank.LastOrDefault()));
+
             print("в банк" + cardsCombination[0].Item1+ cardsCombination[0].Item2);
             // остальные раскидываем по группам с конца
             for (int i = cardsCombination.Count-1; i>0; i--)
@@ -145,7 +152,7 @@ public class FieldController : MonoBehaviour
                 currentCard.CardValue = cardsCombination[i].Item1;
                 currentCard.CardSuit = cardsCombination[i].Item2;
 
-                cardSpriteManager.UpdateView(currentCard, currentCard.CardView); // возможно вынести в отдельный проход
+                cardController.UpdateView(currentCard);
                 print("карта комбинации " + i + cardsCombination[i].Item1 + cardsCombination[i].Item2);
                 print("заполняется в группу " + groupNum+"в объект "+ currentCard.CardView.gameObject);
                 groupsFullness[groupNum]++;
@@ -321,9 +328,9 @@ public class FieldController : MonoBehaviour
             // Добавляем первую карту
             Card cardModel0 = new Card();
             groupModel.Add(cardModel0);
-            cardModel0.CardView = cardsGroup[0].GetComponent<CardView>();
+            cardController.InitCardView(cardsGroup[0].gameObject, cardModel0);
             // Добавляем Listener нажатия для проверки
-            cardModel0.CardView.cardButton.onClick.AddListener(() => ValidateCardInput(cardModel0));
+            cardController.AddOnClickListener(cardModel0, () => ValidateCardInput(cardModel0));
 
 
             for (int i = 1; i < cardsGroup.Count; i++)
@@ -336,14 +343,10 @@ public class FieldController : MonoBehaviour
                 cardModel.Parent = groupModel[i - 1];
                 groupModel[i - 1].Child = cardModel;
 
-                // Оставить ссылку на View, если нет - добавить компонент
-                if (!cardsGroup[i].gameObject.TryGetComponent<CardView>(out CardView cardView))
-                {
-                    cardView = cardsGroup[i].gameObject.AddComponent<CardView>();
-                }
-                cardModel.CardView = cardView;
+                cardController.InitCardView(cardsGroup[i].gameObject, cardModel);
+
                 // Добавляем Listener нажатия для проверки
-                cardModel.CardView.cardButton.onClick.AddListener(() => ValidateCardInput(cardModel));
+                cardController.AddOnClickListener(cardModel, () => ValidateCardInput(cardModel));
 
                 groupModel.Add(cardModel);
 

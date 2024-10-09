@@ -12,7 +12,7 @@ public class Card
     public Card? Child { get; set; }        // Потомок карты
     #nullable disable
 
-    public bool FacedUp  { get; set; } = true;        // Повернута ли
+    public bool FacedUp  { get; set; } = false;        // Повернута ли
 
     public CardView CardView { get; set; }         // View
 
@@ -21,11 +21,10 @@ public class Card
     {
         
     }
-    public Card(/*Card? parent, Card? child,*/ CardValue cardValue, CardSuit cardSuit)
+    public Card(CardValue cardValue, CardSuit cardSuit, Card? parent)
     {
-        /*Parent = parent;
-        Child = child;*/
-        FacedUp = true;
+        Parent = parent;
+        FacedUp = false;
         CardValue = cardValue;
         CardSuit = cardSuit;
     }

@@ -33,6 +33,13 @@ public class CardSpriteManager : MonoBehaviour
                     break;
 
             }
+
+            cardView.cardButton.enabled = true;
+
+        }
+        else
+        {
+            cardView.cardButton.enabled = false;
         }
 
         cardView.SetSprite(sprite);
