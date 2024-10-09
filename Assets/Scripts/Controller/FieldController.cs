@@ -12,6 +12,10 @@ public class FieldController : MonoBehaviour
 
     private CardSpriteManager cardSpriteManager;
 
+    public GameObject cardPrefab;
+    public Transform bankPanel;
+    public float cardOffset = 50f;
+
     void Start()
     {
         cardSpriteManager = GetComponent<CardSpriteManager>();
@@ -26,6 +30,7 @@ public class FieldController : MonoBehaviour
         MakeGameCombinations();
         DistributeCombinationsToCardsGroups();
 
+        SpavnBankCards();
 
 
         /*        foreach (List<Card> cardsGroupModel in fieldState.CardGroups)
@@ -54,6 +59,33 @@ public class FieldController : MonoBehaviour
 
 
     }
+
+    private void SpavnBankCards()
+    {
+        float position = cardPrefab.GetComponent<RectTransform>().rect.width/2;
+        foreach (Card bankCard in fieldState.Bank) 
+        {
+            GameObject card = Instantiate(cardPrefab, bankPanel);
+            card.GetComponent<RectTransform>().anchoredPosition = new Vector2(position, 0f);
+            position += cardOffset;
+
+            // Оставить ссылку на View, если нет - добавить компонент
+            if (card.TryGetComponent<CardView>(out CardView cardView))
+            {
+                cardView = card.AddComponent<CardView>();
+            }
+            bankCard.CardView = cardView;
+            cardSpriteManager.UpdateView(bankCard, bankCard.CardView); 
+
+
+        }
+
+
+        fieldState.currentCard = fieldState.Bank.First();
+
+
+    }
+
     private void DistributeCombinationsToCardsGroups()
     {
         // доступные слоты карт в группах
@@ -95,7 +127,6 @@ public class FieldController : MonoBehaviour
                 groupsFullness[groupNum]++;
 
             }
-            fieldState.Bank.Reverse();
 
 
         }

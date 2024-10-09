@@ -14,6 +14,9 @@ public class FieldState
 
     public bool IFcardsPositionedCorrectly;
 
+    public Card currentCard;
+
+
     public FieldState() {
         CardGroups = new List<List<Card>>();
         Bank = new List<Card>();
