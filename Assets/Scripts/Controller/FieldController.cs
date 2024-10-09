@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CardSpriteManager))]
 public class FieldController : MonoBehaviour
@@ -14,6 +15,7 @@ public class FieldController : MonoBehaviour
 
     public GameObject cardPrefab;
     public Transform bankPanel;
+    public Transform combinationPanel;
     public float cardOffset = 50f;
 
     void Start()
@@ -75,16 +77,38 @@ public class FieldController : MonoBehaviour
                 cardView = card.AddComponent<CardView>();
             }
             bankCard.CardView = cardView;
-            cardSpriteManager.UpdateView(bankCard, bankCard.CardView); 
+            cardSpriteManager.UpdateView(bankCard, bankCard.CardView);
 
-
+            bankCard.CardView.cardButton.onClick.AddListener(()=> ValidateCardInput(bankCard));
         }
 
 
-        fieldState.currentCard = fieldState.Bank.First();
-
+        fieldState.currentCard = fieldState.Bank.Last();
+        fieldState.currentCard.CardView.GoToCombinationPlace(combinationPanel, () => SendCardToCombinationPlace(fieldState.currentCard));
 
     }
+
+    private void ValidateCardInput(Card card)
+    {
+        if (GameDesignData.GetNextCardValue(card.CardValue) == fieldState.currentCard.CardValue ||
+            GameDesignData.GetPreviousCardValue(card.CardValue) == fieldState.currentCard.CardValue)
+        {
+            card.CardView.GoToCombinationPlace(combinationPanel, () => SendCardToCombinationPlace(card));
+        }
+        
+    }
+
+    private void SendCardToCombinationPlace(Card card)
+    {
+        card.CardView.gameObject.transform.SetParent(combinationPanel);
+        card.CardView.cardButton.onClick.RemoveAllListeners();
+
+        fieldState.currentCard = card;
+    }
+
+
+
+
 
     private void DistributeCombinationsToCardsGroups()
     {
