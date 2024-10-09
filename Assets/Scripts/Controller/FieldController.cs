@@ -93,6 +93,7 @@ public class FieldController : MonoBehaviour
         if (GameDesignData.GetNextCardValue(card.CardValue) == fieldState.currentCard.CardValue ||
             GameDesignData.GetPreviousCardValue(card.CardValue) == fieldState.currentCard.CardValue)
         {
+            fieldState.currentCard = card;
             card.CardView.GoToCombinationPlace(combinationPanel, () => SendCardToCombinationPlace(card));
         }
         
@@ -103,7 +104,6 @@ public class FieldController : MonoBehaviour
         card.CardView.gameObject.transform.SetParent(combinationPanel);
         card.CardView.cardButton.onClick.RemoveAllListeners();
 
-        fieldState.currentCard = card;
     }
 
 
@@ -322,6 +322,9 @@ public class FieldController : MonoBehaviour
             Card cardModel0 = new Card();
             groupModel.Add(cardModel0);
             cardModel0.CardView = cardsGroup[0].GetComponent<CardView>();
+            // Добавляем Listener нажатия для проверки
+            cardModel0.CardView.cardButton.onClick.AddListener(() => ValidateCardInput(cardModel0));
+
 
             for (int i = 1; i < cardsGroup.Count; i++)
             {
@@ -339,6 +342,8 @@ public class FieldController : MonoBehaviour
                     cardView = cardsGroup[i].gameObject.AddComponent<CardView>();
                 }
                 cardModel.CardView = cardView;
+                // Добавляем Listener нажатия для проверки
+                cardModel.CardView.cardButton.onClick.AddListener(() => ValidateCardInput(cardModel));
 
                 groupModel.Add(cardModel);
 

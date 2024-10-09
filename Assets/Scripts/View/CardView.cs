@@ -11,7 +11,12 @@ public class CardView : MonoBehaviour
     private void Awake()
     {
         cardImage= GetComponent<Image>();
-        cardButton = GetComponent<Button>();
+        // Если нет button - создать
+        if (!gameObject.TryGetComponent<Button>(out Button button))
+        {
+            button = gameObject.AddComponent<Button>();
+        }
+        cardButton = button;
 
         //cardButton.onClick.AddListener(GoToCombinationPlace);
     }
@@ -25,6 +30,7 @@ public class CardView : MonoBehaviour
     {
         DOTween.Init();
         gameObject.transform.DOMove(combinationPlace.position,1).OnComplete(()=> Complete());
+        gameObject.transform.SetAsLastSibling();
 
     }
 
