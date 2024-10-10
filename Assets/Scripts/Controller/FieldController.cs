@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.UI;
-using Unity.IO.LowLevel.Unsafe;
-using UnityEngine.EventSystems;
 using System.Collections;
 
 [RequireComponent(typeof(CardSpriteManager))]
+[RequireComponent(typeof(UIController))]
 public class FieldController : MonoBehaviour
 {
     public List<List<RectTransform>> cardsGroups;          // Список групп карт
@@ -15,6 +13,7 @@ public class FieldController : MonoBehaviour
     public FieldState fieldState;
 
     private CardSpriteManager cardSpriteManager;
+    private UIController uiController;
     private CardController cardController;
 
     public GameObject cardPrefab;
@@ -24,24 +23,25 @@ public class FieldController : MonoBehaviour
     public float cardOffset = 50f;
 
     public Transform cardsSpavnPosition;
-    public Button restartButton;
 
     private void Awake()
     {
         cardSpriteManager = GetComponent<CardSpriteManager>();
+        uiController = GetComponent<UIController>();
+
         cardController = new CardController();
         cardController.cardSpriteManager = cardSpriteManager;
 
         cardsGroups = new List<List<RectTransform>>();
 
         fieldState = new FieldState();
-        fieldState.CardNumber = cards.Length;
+        fieldState.CardsNumber = cards.Length;
 
         GroupCards();
         SetGroupsHierarchy();
         
 
-        restartButton.onClick.AddListener(RestartLevel);
+        
     }
     void Start()
     {
@@ -75,7 +75,7 @@ public class FieldController : MonoBehaviour
 
     }
 
-    private void RestartLevel()
+    public void RestartLevel()
     {
         foreach (var card in fieldState.Bank) 
         {
@@ -102,6 +102,48 @@ public class FieldController : MonoBehaviour
         DistributeCombinationsToCardsGroups();
         SpavnBankCards();
         AnimateCards();
+        uiController.StartGame();
+
+        fieldState.CurrentFieldCardsNumber = fieldState.CardsNumber;
+    }
+
+    private void CheckIfGameEnd()
+    {
+        if(!CheckIfGameWin())
+            CheckIfGameFail();
+    }
+    private bool CheckIfGameWin()
+    {
+        if (fieldState.CurrentFieldCardsNumber==0)
+        {
+            uiController.WinGame();
+            return true;
+        }
+        return false;
+    }
+    private void CheckIfGameFail()
+    {
+        bool isGameFail = true;
+        if (fieldState.CurrentBankCardsNumber != 0)
+        {
+            return;
+        }
+
+        foreach (Card? topCard in fieldState.TopCardsInGroups)
+        {
+            if(topCard != null)
+            {
+                if(GameDesignData.IfContinueSequence(topCard.CardValue, fieldState.currentCard.CardValue))
+                {
+                    isGameFail = false;
+                    break; 
+                }
+            }
+        }
+        if (isGameFail) 
+        {
+            uiController.EndMoves();
+        }
     }
 
     private void AnimateCards()
@@ -118,6 +160,8 @@ public class FieldController : MonoBehaviour
 
     private void SpavnBankCards()
     {
+        fieldState.CurrentBankCardsNumber = fieldState.Bank.Count();
+
         float position = cardPrefab.GetComponent<RectTransform>().rect.width/2;
         foreach (Card bankCard in fieldState.Bank) 
         {
@@ -137,24 +181,29 @@ public class FieldController : MonoBehaviour
     private IEnumerator UnlockTopCards()
     {
         yield return new WaitForSeconds(GameDesignData.animation_spavn_cards_duration);
-        foreach(List<Card> group in fieldState.CardGroups)
+        fieldState.TopCardsInGroups.Clear();
+
+        foreach (List<Card> group in fieldState.CardGroups)
         {
             cardController.UnlockCardWithAnim(group.Last());
+            fieldState.TopCardsInGroups.Add(group.Last());
         }
         BankInput(fieldState.currentCard);
     }
 
 
 
-    #region user inputs
+    #region user card inputs
     private void ValidateCardInput(Card card)
     {
-        if (GameDesignData.GetNextCardValue(card.CardValue) == fieldState.currentCard.CardValue ||
-            GameDesignData.GetPreviousCardValue(card.CardValue) == fieldState.currentCard.CardValue)
+        if (GameDesignData.IfContinueSequence(card.CardValue, fieldState.currentCard.CardValue))
         {
             fieldState.currentCard = card;
-            cardController.UnlockParentCardWithAnim(card);
+            cardController.UnlockParentCardWithAnim(card, fieldState.TopCardsInGroups);
             cardController.AnimateToCombinationPlace(card, combinationPanel);
+            fieldState.CurrentFieldCardsNumber--;
+
+            CheckIfGameEnd();
         }
     }
 
@@ -163,6 +212,8 @@ public class FieldController : MonoBehaviour
         fieldState.currentCard = card;
         cardController.UnlockParentBankCard(card);
         cardController.AnimateBankToCombinationPlace(card, combinationPanel);
+        fieldState.CurrentBankCardsNumber--;
+        CheckIfGameEnd();
     }
     #endregion user inputs
 
@@ -184,11 +235,11 @@ public class FieldController : MonoBehaviour
         // для каждой комбинации
         foreach (List<(CardValue, CardSuit)> cardsCombination in fieldState.CardCombinations) 
         {
-            print("комбинация");
+            //print("комбинация");
             // первую карту в банк
             fieldState.Bank.Add(new Card(cardsCombination[0].Item1, cardsCombination[0].Item2, fieldState.Bank.LastOrDefault()));
 
-            print("в банк" + cardsCombination[0].Item1+ cardsCombination[0].Item2);
+            //print("в банк" + cardsCombination[0].Item1+ cardsCombination[0].Item2);
             // остальные раскидываем по группам с конца
             for (int i = cardsCombination.Count-1; i>0; i--)
             {
@@ -203,8 +254,8 @@ public class FieldController : MonoBehaviour
                 currentCard.CardSuit = cardsCombination[i].Item2;
 
                 cardController.UpdateView(currentCard);
-                print("карта комбинации " + i + cardsCombination[i].Item1 + cardsCombination[i].Item2);
-                print("заполняется в группу " + groupNum+"в объект "+ currentCard.CardView.gameObject);
+                //print("карта комбинации " + i + cardsCombination[i].Item1 + cardsCombination[i].Item2);
+                //print("заполняется в группу " + groupNum+"в объект "+ currentCard.CardView.gameObject);
                 groupsFullness[groupNum]++;
 
             }
@@ -232,11 +283,11 @@ public class FieldController : MonoBehaviour
 
         fieldState.CardCombinations.Clear();
 
-        while (distributedCards < fieldState.CardNumber)
+        while (distributedCards < fieldState.CardsNumber)
         {
             // определение параметров комбинации
             // длинна от 2х до 7 или сколько осталось
-            combinationLength = UnityEngine.Random.Range(2, Math.Min(8, fieldState.CardNumber-distributedCards+1));
+            combinationLength = UnityEngine.Random.Range(2, Math.Min(8, fieldState.CardsNumber-distributedCards+1));
 
             combinationDirection = (UnityEngine.Random.Range(0f, 1f) <= 0.65) ? 1 : -1;
             directionChange = UnityEngine.Random.Range(0f, 1f) <= 0.15;
@@ -273,7 +324,7 @@ public class FieldController : MonoBehaviour
 
             // если остаётся 1 последний то его нужно или присоединить к предыдущей комбинации (если она не 7)
             // или откусить от последней 1 и сделать пару
-            if(fieldState.CardNumber - ( distributedCards + combinationLength-1 ) == 1) // -1 так как одна карта уйдёт в банк
+            if(fieldState.CardsNumber - ( distributedCards + combinationLength-1 ) == 1) // -1 так как одна карта уйдёт в банк
             {
                 if (combinationLength < 7)
                 {
@@ -369,14 +420,14 @@ public class FieldController : MonoBehaviour
         {
             cardsGroup.OrderBy(p => p.transform.GetSiblingIndex());
         }
-
+        int groupNumber = 0;
         // С 0 до конца по кучке карт, 0 нижняя (предок) -> и вверх (потомки)
         foreach (List<RectTransform> cardsGroup in cardsGroups)
         {
             List<Card> groupModel = new List<Card>();
 
             // Добавляем первую карту
-            Card cardModel0 = new Card();
+            Card cardModel0 = new Card(groupNumber);
             groupModel.Add(cardModel0);
             cardController.InitCardView(cardsGroup[0].gameObject, cardModel0);
             // Добавляем Listener нажатия для проверки
@@ -389,7 +440,7 @@ public class FieldController : MonoBehaviour
                 // Присвоить ей предка 
                 // Присвоить её как потомка предку
 
-                Card cardModel = new Card();
+                Card cardModel = new Card(groupNumber);
                 cardModel.Parent = groupModel[i - 1];
                 groupModel[i - 1].Child = cardModel;
 
@@ -412,6 +463,7 @@ public class FieldController : MonoBehaviour
 
             groupModel[0].Parent = null;
             groupModel[groupModel.Count-1].Child = null;
+            groupNumber++;
 
         }
 

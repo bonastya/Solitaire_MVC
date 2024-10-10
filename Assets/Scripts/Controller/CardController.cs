@@ -50,14 +50,14 @@ public class CardController
 
         UnlockCard(card);
     }
-    public void UnlockParentCardWithAnim(Card card)
+    public void UnlockParentCardWithAnim(Card card, List<Card> topCards)
     {
         var parent = card.Parent;
         if(parent != null)
         {
             parent.CardView.OpenCard(()=>UnlockCard(parent));
         }
-        
+        topCards[card.GroupNum] = parent;
     }
     public void UnlockCardWithAnim(Card card)
     {

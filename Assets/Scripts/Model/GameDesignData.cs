@@ -1,4 +1,5 @@
 using System;
+using Unity.IO.LowLevel.Unsafe;
 
 public static class GameDesignData 
 {
@@ -45,6 +46,12 @@ public static class GameDesignData
             return (CardValue)(CardValuesNumber - 1);
         }
 
+    }
+
+    public static bool IfContinueSequence(CardValue checkCardValue, CardValue currentCardValue)
+    {
+        return (GameDesignData.GetNextCardValue(checkCardValue) == currentCardValue ||
+            GameDesignData.GetPreviousCardValue(checkCardValue) == currentCardValue);
     }
 
     public static CardSuit RandomSuit()

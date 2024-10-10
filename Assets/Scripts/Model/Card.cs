@@ -16,10 +16,11 @@ public class Card
 
     public CardView CardView { get; set; }         // View
 
+    public int GroupNum { get; set; }
 
-    public Card()
+    public Card(int groupNumber)
     {
-        
+        GroupNum = groupNumber;
     }
     public Card(CardValue cardValue, CardSuit cardSuit, Card? parent)
     {
@@ -27,6 +28,7 @@ public class Card
         FacedUp = false;
         CardValue = cardValue;
         CardSuit = cardSuit;
+
     }
 
 
