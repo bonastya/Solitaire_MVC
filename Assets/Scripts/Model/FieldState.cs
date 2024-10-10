@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine.UIElements;
 
+[Serializable]
 public class FieldState
 {
     public List<List<Card>> CardGroups { get; private set; }   // Группы карт

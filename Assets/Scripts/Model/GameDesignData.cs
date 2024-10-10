@@ -9,6 +9,9 @@ public static class GameDesignData
     public const float increasing_combination = 0.65f ;    // Вероятность возрастающей комбинации
     public const float change_direction = 0.15f;           // Вероятность изменения направлениия комбинации
 
+    public const float animation_spavn_cards_duration = 3f;
+    public const float animation_open_card_duration = 0.2f;
+    public const float animation_open_bank_duration = 0.5f;
 
     // статичные массивы формируются из enum CardValue и enum CardSuit
     public static CardValue[] CardValues = Enum.GetValues(typeof(CardValue)) as CardValue[];

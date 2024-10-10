@@ -35,32 +35,35 @@ public class CardController
     }
     public void AnimateBankToCombinationPlace(Card card, Transform combinationPanel)
     {
-        card.CardView.GoToCombinationPlace(combinationPanel, () => SendBankCardToCombinationPlace(card, combinationPanel));
+
+        card.CardView.GoToCombinationPlaceBank(combinationPanel, () => SendBankCardToCombinationPlace(card, combinationPanel));
     }
     public void SendCardToCombinationPlace(CardView cardView, Transform combinationPanel)
     {
         cardView.gameObject.transform.SetParent(combinationPanel);
-        cardView.cardButton.onClick.RemoveAllListeners();
+        cardView.cardButton.enabled = false;
     }
     public void SendBankCardToCombinationPlace(Card card, Transform combinationPanel)
     {
         card.CardView.gameObject.transform.SetParent(combinationPanel);
-        card.CardView.cardButton.onClick.RemoveAllListeners();
+        card.CardView.cardButton.enabled = false;
 
-        card.FacedUp = true;
-        cardSpriteManager.UpdateView(card, card.CardView);
-
+        UnlockCard(card);
     }
-    public void UnlockParentCard(Card card)
+    public void UnlockParentCardWithAnim(Card card)
     {
         var parent = card.Parent;
         if(parent != null)
         {
-            parent.FacedUp = true;
-            cardSpriteManager.UpdateView(parent, parent.CardView);
+            parent.CardView.OpenCard(()=>UnlockCard(parent));
         }
         
     }
+    public void UnlockCardWithAnim(Card card)
+    {
+        card.CardView.OpenCard(() => UnlockCard(card));
+    }
+
     public void UnlockParentBankCard(Card card)
     {
         var parent = card.Parent;
@@ -80,6 +83,18 @@ public class CardController
     {
         card.CardView.cardButton.enabled = true;
     }
+    public void Remove(Card card)
+    {
+        card.CardView.DestroyCard();
+    }
+
+    public void SetToStartPos(Card card, Transform parent)
+    {
+        card.CardView.ReturnToStartPos();
+        card.CardView.gameObject.transform.parent = parent;
+    }
+
+
 
 
 }

@@ -1,7 +1,7 @@
 
 using System;
 using UnityEngine;
-
+[Serializable]
 public class Card 
 {
     public CardValue CardValue { get; set; }  // Номинал карты

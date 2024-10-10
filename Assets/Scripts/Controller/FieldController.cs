@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
 using Unity.IO.LowLevel.Unsafe;
+using UnityEngine.EventSystems;
+using System.Collections;
 
 [RequireComponent(typeof(CardSpriteManager))]
 public class FieldController : MonoBehaviour
@@ -16,14 +18,18 @@ public class FieldController : MonoBehaviour
     private CardController cardController;
 
     public GameObject cardPrefab;
+    public Transform gameField;
     public Transform bankPanel;
     public Transform combinationPanel;
     public float cardOffset = 50f;
 
-    void Start()
+    public Transform cardsSpavnPosition;
+    public Button restartButton;
+
+    private void Awake()
     {
         cardSpriteManager = GetComponent<CardSpriteManager>();
-        cardController = new CardController(); 
+        cardController = new CardController();
         cardController.cardSpriteManager = cardSpriteManager;
 
         cardsGroups = new List<List<RectTransform>>();
@@ -33,12 +39,14 @@ public class FieldController : MonoBehaviour
 
         GroupCards();
         SetGroupsHierarchy();
-        MakeGameCombinations();
-        DistributeCombinationsToCardsGroups();
         
-        SpavnBankCards();
 
-        UnlockTopCards();
+        restartButton.onClick.AddListener(RestartLevel);
+    }
+    void Start()
+    {
+        StartLevel();
+
 
         /*        foreach (List<Card> cardsGroupModel in fieldState.CardGroups)
                 {
@@ -54,7 +62,7 @@ public class FieldController : MonoBehaviour
                 }*/
 
 
-        foreach (List<(CardValue, CardSuit)> cardsCombination in fieldState.CardCombinations)
+        /*foreach (List<(CardValue, CardSuit)> cardsCombination in fieldState.CardCombinations)
         {
             print("Num: " + cardsCombination.Count);
             foreach ((CardValue, CardSuit) card in cardsCombination)
@@ -62,9 +70,50 @@ public class FieldController : MonoBehaviour
                 print("card "+card.Item1 + card.Item2);
             }
             print("---------------------------");
+        }*/
+
+
+    }
+
+    private void RestartLevel()
+    {
+        foreach (var card in fieldState.Bank) 
+        {
+            cardController.Remove(card);
+        }
+        fieldState.Bank.Clear();
+
+        foreach (List<Card> group in fieldState.CardGroups)
+        {
+            foreach (Card card in group)
+            {
+                cardController.SetToStartPos(card, gameField);
+                card.FacedUp = false;
+            }
         }
 
 
+        StartLevel();
+    }
+
+    private void StartLevel()
+    {
+        MakeGameCombinations();
+        DistributeCombinationsToCardsGroups();
+        SpavnBankCards();
+        AnimateCards();
+    }
+
+    private void AnimateCards()
+    {
+        foreach (List<Card> group in fieldState.CardGroups)
+        {
+            foreach (Card card in group)
+            {
+                card.CardView.GoToStartPosition(cardsSpavnPosition, () => { });
+            }
+        }
+        StartCoroutine(UnlockTopCards());
     }
 
     private void SpavnBankCards()
@@ -81,29 +130,30 @@ public class FieldController : MonoBehaviour
             cardController.AddOnClickListener(bankCard, () => BankInput(bankCard));
         }
 
-
         fieldState.currentCard = fieldState.Bank.Last();
 
     }
 
-    private void UnlockTopCards()
+    private IEnumerator UnlockTopCards()
     {
+        yield return new WaitForSeconds(GameDesignData.animation_spavn_cards_duration);
         foreach(List<Card> group in fieldState.CardGroups)
         {
-            cardController.UnlockCard(group.Last());
+            cardController.UnlockCardWithAnim(group.Last());
         }
-        cardController.UnlockCard(fieldState.currentCard);
-        cardController.AnimateToCombinationPlace(fieldState.currentCard, combinationPanel);
-        cardController.UnlockBanckCard(fieldState.currentCard.Parent);
+        BankInput(fieldState.currentCard);
     }
 
+
+
+    #region user inputs
     private void ValidateCardInput(Card card)
     {
         if (GameDesignData.GetNextCardValue(card.CardValue) == fieldState.currentCard.CardValue ||
             GameDesignData.GetPreviousCardValue(card.CardValue) == fieldState.currentCard.CardValue)
         {
             fieldState.currentCard = card;
-            cardController.UnlockParentCard(card);
+            cardController.UnlockParentCardWithAnim(card);
             cardController.AnimateToCombinationPlace(card, combinationPanel);
         }
     }
@@ -114,7 +164,7 @@ public class FieldController : MonoBehaviour
         cardController.UnlockParentBankCard(card);
         cardController.AnimateBankToCombinationPlace(card, combinationPanel);
     }
-
+    #endregion user inputs
 
     private void DistributeCombinationsToCardsGroups()
     {
