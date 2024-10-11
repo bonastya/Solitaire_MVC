@@ -1,27 +1,27 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
-//запуск анимаций
-//переключение спрайтов
-//обновление модели карты
+
+/// <summary>
+/// Вспомогательный контроллер, операции с отображением карты - анимации, доступность, изменение, создание, удаление
+/// </summary>
 public class CardController 
 {
+
     public CardSpriteManager cardSpriteManager;
 
+    #region main actions with view
+
+    /// <summary>
+    /// Оставить ссылку на View, если нет - добавить компонент
+    /// </summary>
     public void InitCardView(GameObject card, Card cardModel)
     {
-        // Оставить ссылку на View, если нет - добавить компонент
         if (card.TryGetComponent<CardView>(out CardView cardView))
         {
             cardView = card.AddComponent<CardView>();
         }
         cardModel.CardView = cardView;
-    }
-    public void UpdateView(Card cardModel)
-    {
-        cardSpriteManager.UpdateView(cardModel, cardModel.CardView);
     }
 
     public void AddOnClickListener(Card card, Action onClick)
@@ -29,20 +29,58 @@ public class CardController
         card.CardView.cardButton.onClick.AddListener(() => onClick());
     }
 
+    /// <summary>
+    /// Установка страйта в зависсимости от параметров модели карты
+    /// </summary>
+    public void UpdateView(Card cardModel)
+    {
+        cardSpriteManager.UpdateView(cardModel, cardModel.CardView);
+    }
+
+    /// <summary>
+    /// Перемещение на начальную позицию на поле, возвращение в иерархии
+    /// </summary>
+    public void SetToStartPos(Card card, Transform parent)
+    {
+        card.CardView.ReturnToStartPos();
+        card.CardView.gameObject.transform.parent = parent;
+    }
+
+    public void Remove(Card card)
+    {
+        card.CardView.DestroyCard();
+    }
+
+
+
+    #endregion main actions with view
+
+    #region to combination place animations and callbacks
+
+    /// <summary>
+    /// Анимация карты поля - перемещение в стопку комбинации
+    /// </summary>
     public void AnimateToCombinationPlace(Card card, Transform combinationPanel)
     {
+        // Callback - перемещение в иерархии
         card.CardView.GoToCombinationPlace(combinationPanel, () => SendCardToCombinationPlace(card.CardView, combinationPanel));
     }
-    public void AnimateBankToCombinationPlace(Card card, Transform combinationPanel)
-    {
 
-        card.CardView.GoToCombinationPlaceBank(combinationPanel, () => SendBankCardToCombinationPlace(card, combinationPanel));
-    }
     public void SendCardToCombinationPlace(CardView cardView, Transform combinationPanel)
     {
+        // Перемещение карточки в иерархии, отключение нажатия
         cardView.gameObject.transform.SetParent(combinationPanel);
         cardView.cardButton.enabled = false;
     }
+
+    /// <summary>
+    /// Анимация карты банка - перемещение в стопку комбинации
+    /// </summary>
+    public void AnimateBankToCombinationPlace(Card card, Transform combinationPanel)
+    {
+        card.CardView.GoToCombinationPlaceBank(combinationPanel, () => SendBankCardToCombinationPlace(card, combinationPanel));
+    }
+
     public void SendBankCardToCombinationPlace(Card card, Transform combinationPanel)
     {
         card.CardView.gameObject.transform.SetParent(combinationPanel);
@@ -50,22 +88,29 @@ public class CardController
 
         UnlockCard(card);
     }
+
+    #endregion to combination place animations and callbacks
+
+    #region unlock animations and callbacks
     public void UnlockParentCardWithAnim(Card card, List<Card> topCards)
     {
+        // Следующая карта в группе открывается с поворотом и становится верхней
         var parent = card.Parent;
-        if(parent != null)
+        if (parent != null)
         {
-            parent.CardView.OpenCard(()=>UnlockCard(parent));
+            parent.CardView.OpenCard(() => UnlockCard(parent));
         }
         topCards[card.GroupNum] = parent;
     }
     public void UnlockCardWithAnim(Card card)
     {
+        // Открывает карту с поворотом
         card.CardView.OpenCard(() => UnlockCard(card));
     }
 
     public void UnlockParentBankCard(Card card)
     {
+        // Карта банка становится доступна для нажатия 
         var parent = card.Parent;
         if(parent != null)
         {
@@ -73,28 +118,14 @@ public class CardController
         }
         
     }
-
     public void UnlockCard(Card card)
     {
+        // Отображение лицевого спрайта карты
         card.FacedUp = true;
         cardSpriteManager.UpdateView(card, card.CardView);
     }
-    public void UnlockBanckCard(Card card)
-    {
-        card.CardView.cardButton.enabled = true;
-    }
-    public void Remove(Card card)
-    {
-        card.CardView.DestroyCard();
-    }
 
-    public void SetToStartPos(Card card, Transform parent)
-    {
-        card.CardView.ReturnToStartPos();
-        card.CardView.gameObject.transform.parent = parent;
-    }
-
-
+    #endregion unlock animations and callbacks
 
 
 }

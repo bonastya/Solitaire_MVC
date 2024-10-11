@@ -1,22 +1,19 @@
 
-using System;
-using UnityEngine;
-[Serializable]
 public class Card 
 {
-    public CardValue CardValue { get; set; }  // Номинал карты
-    public CardSuit CardSuit { get; set; }    // Масть карты
+    public CardValue CardValue { get; set; }     // Номинал карты
+    public CardSuit CardSuit { get; set; }       // Масть карты
 
     #nullable enable
-    public Card? Parent { get; set; }      // Предок карты
-    public Card? Child { get; set; }        // Потомок карты
+    public Card? Parent { get; set; }            // Предок карты
+    public Card? Child { get; set; }             // Потомок карты
     #nullable disable
 
-    public bool FacedUp  { get; set; } = false;        // Повернута ли
+    public bool FacedUp  { get; set; } = false;  // Повернута ли
 
-    public CardView CardView { get; set; }         // View
+    public CardView CardView { get; set; }       // View
 
-    public int GroupNum { get; set; }
+    public int GroupNum { get; set; }            // Номер группы в которой находится
 
     public Card(int groupNumber)
     {
@@ -30,7 +27,5 @@ public class Card
         CardSuit = cardSuit;
 
     }
-
-
 
 }

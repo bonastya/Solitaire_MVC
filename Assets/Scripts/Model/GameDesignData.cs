@@ -3,48 +3,76 @@ using Unity.IO.LowLevel.Unsafe;
 
 public static class GameDesignData 
 {
-    public const int  NUM_OF_CARDS = 40;                   // Количество карт которое должно быть на поле
+    // Математическая модель
 
-    public const int MIN_COMB = 2;                         // Минимальное количество карт в комбинации
-    public const int MAX_COMB = 7;                         // Максимальное количество карт в комбинации
-    public const float increasing_combination = 0.65f ;    // Вероятность возрастающей комбинации
-    public const float change_direction = 0.15f;           // Вероятность изменения направлениия комбинации
+    /// <summary>
+    /// Количество карт которое должно быть на поле
+    /// </summary>
+    public const int  NUM_OF_CARDS = 40;                   
+    
+    /// <summary>
+    /// Минимальное количество карт в комбинации
+    /// </summary>
+    public const int MIN_COMB = 2;                         
+    
+    /// <summary>
+    /// Максимальное количество карт в комбинации
+    /// </summary>
+    public const int MAX_COMB = 7;                         
+    
+    /// <summary>
+    /// Вероятность возрастающей комбинации
+    /// </summary>
+    public const float INC_COMB = 0.65f ;
 
-    public const float animation_spavn_cards_duration = 3f;
-    public const float animation_open_card_duration = 0.2f;
-    public const float animation_open_bank_duration = 0.5f;
+    /// <summary>
+    /// Вероятность изменения направлениия комбинации
+    /// </summary>
+    public const float CHANGE_COMB_DIR = 0.15f;
 
-    // статичные массивы формируются из enum CardValue и enum CardSuit
+    // Отображенние
+
+    /// <summary>
+    /// Продолжительность анимации появления карт
+    /// </summary>
+    public const float ANIM_SPAWN_CARDS_DURATION = 3f;
+
+    /// <summary>
+    /// Продолжительность анимации открытия карты
+    /// </summary>
+    public const float ANIM_OPEN_CARD_DURATION = 0.2f;
+
+    /// <summary>
+    /// Продолжительность анимации открытия карт банка
+    /// </summary>
+    public const float ANIM_OPEN_BANK_DURATION = 0.5f;
+
+    /// <summary>
+    /// Смещение карты банка.
+    /// </summary>
+    public const float BANK_CARD_OFFSET = 50f;
+
+
+    // Cтатичные массивы формируются из enum CardValue и enum CardSuit
     public static CardValue[] CardValues = Enum.GetValues(typeof(CardValue)) as CardValue[];
     public static int CardValuesNumber = CardValues.Length;
 
     public static CardSuit[] CardSuits = Enum.GetValues(typeof(CardSuit)) as CardSuit[];
     public static int CardSuitsNumber = CardSuits.Length;
 
+    #region service functions
 
     public static CardValue GetNextCardValue(CardValue cardValue)
     {
-        if ((int)cardValue != (CardValuesNumber-1))
-        {
-            return (CardValue)((int)cardValue + 1);//todo убрать приведения
-        }
-        else
-        {
-            return (CardValue)0; //todo убрать приведения
-        }
-        
+        // Следующее значение, если остаток от деления на колличество - 0, то берём первый элемент
+        return (CardValue)(((int)cardValue + 1) % CardValuesNumber);
+
     }
 
     public static CardValue GetPreviousCardValue(CardValue cardValue)
     {
-        if ((int)cardValue != 0)
-        {
-            return (CardValue)((int)cardValue - 1);
-        }
-        else
-        {
-            return (CardValue)(CardValuesNumber - 1);
-        }
+        // Предыдущее значение, в случае 0 будет взято CardValuesNumber-1, т е последнее
+        return (CardValue)(((int)cardValue - 1 + CardValuesNumber) % CardValuesNumber);
 
     }
 
@@ -58,13 +86,17 @@ public static class GameDesignData
     {
         return (CardSuit)UnityEngine.Random.Range(0, CardSuitsNumber);
     }
+
     public static CardValue RandomValue()
     {
         return (CardValue)UnityEngine.Random.Range(0, CardValuesNumber);
     }
 
+    #endregion service functions
+
 }
 
+#region enums
 public enum CardSuit
 {
     Spades,  // Пики
@@ -89,3 +121,5 @@ public enum CardValue
     King,
     Ace
 }
+
+#endregion enums

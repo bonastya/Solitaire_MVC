@@ -1,19 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
     public FieldController fieldController;
+
+    [Header("Restart")]
     public Button restartButton;
 
+    [Header("End Moves Panel")]
     public GameObject endMovesPanel;
     public Button endMovesPanelFailButton;
 
+    [Header("Fail Panel")]
     public GameObject failPanel;
     public Button failPanelRestartButton;
 
+    [Header("Win Panel")]
     public GameObject winPanel;
     public Button winPanelRestartButton;
 

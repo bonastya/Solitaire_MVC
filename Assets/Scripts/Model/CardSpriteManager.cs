@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CardSpriteManager : MonoBehaviour
 {
@@ -12,6 +9,9 @@ public class CardSpriteManager : MonoBehaviour
 
     public Sprite BackSideSprite;
 
+    /// <summary>
+    /// Установка страйта в зависсимости от параметров модели карты
+    /// </summary>
     public void UpdateView(Card cardModel, CardView cardView)
     {
         Sprite sprite = BackSideSprite; 
