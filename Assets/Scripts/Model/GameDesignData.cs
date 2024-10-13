@@ -50,7 +50,7 @@ public static class GameDesignData
     /// <summary>
     /// Смещение карты банка
     /// </summary>
-    public const float BANK_CARD_OFFSET = 50f;
+    public const float BANK_CARD_OFFSET = 20f;
 
 
     // Cтатичные массивы формируются из enum CardValue и enum CardSuit

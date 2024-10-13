@@ -35,6 +35,7 @@ public class CardController
     public void UpdateView(Card cardModel)
     {
         cardSpriteManager.UpdateView(cardModel, cardModel.CardView);
+
     }
 
     /// <summary>
@@ -83,10 +84,10 @@ public class CardController
 
     public void SendBankCardToCombinationPlace(Card card, Transform combinationPanel)
     {
-        card.CardView.gameObject.transform.SetParent(combinationPanel);
+        card.CardView.gameObject.transform.SetParent(combinationPanel); 
+        UnlockCard(card);
         card.CardView.cardButton.enabled = false;
 
-        UnlockCard(card);
     }
 
     #endregion to combination place animations and callbacks
