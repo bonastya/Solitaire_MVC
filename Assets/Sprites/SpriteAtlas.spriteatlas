@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CardsAtlas
+  m_Name: SpriteAtlas
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -20,18 +20,32 @@ SpriteAtlas:
       readable: 0
       crunchedCompression: 0
       sRGB: 1
-    platformSettings: []
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
     packingSettings:
       serializedVersion: 2
       padding: 4
       blockOffset: 1
       allowAlphaSplitting: 0
-      enableRotation: 1
-      enableTightPacking: 1
+      enableRotation: 0
+      enableTightPacking: 0
       enableAlphaDilation: 0
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
+    - {fileID: -3488796, guid: eb5640f62f502434583bf108c46e9cd7, type: 3}
     - {fileID: -656539727, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
     - {fileID: -1763663036, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
     - {fileID: -1259761655, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
@@ -86,10 +100,16 @@ SpriteAtlas:
     - {fileID: -563902738, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
     - {fileID: 459699283, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
     - {fileID: 1383926839, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
+    - {fileID: -1347397921, guid: 3314eea4e2255e447a55ca3819b21a1d, type: 3}
+    - {fileID: 996711285, guid: 4d3c02bedb6ae9846a85a52803c5ace4, type: 3}
+    - {fileID: -1862277134, guid: 28ef7243646372c4086764dd30ad462a, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
+    - 28ef7243646372c4086764dd30ad462a: -1862277134
+    - 3314eea4e2255e447a55ca3819b21a1d: -1347397921
+    - eb5640f62f502434583bf108c46e9cd7: -3488796
     - b90b3e3ea0b11334e9690f5db7983015: 1038838556
     - b90b3e3ea0b11334e9690f5db7983015: 924915642
     - b90b3e3ea0b11334e9690f5db7983015: -1607573977
@@ -144,8 +164,12 @@ SpriteAtlas:
     - b90b3e3ea0b11334e9690f5db7983015: 664570001
     - b90b3e3ea0b11334e9690f5db7983015: -1259761655
     - b90b3e3ea0b11334e9690f5db7983015: -1763663036
+    - 4d3c02bedb6ae9846a85a52803c5ace4: 996711285
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: -1862277134, guid: 28ef7243646372c4086764dd30ad462a, type: 3}
+  - {fileID: -1347397921, guid: 3314eea4e2255e447a55ca3819b21a1d, type: 3}
+  - {fileID: -3488796, guid: eb5640f62f502434583bf108c46e9cd7, type: 3}
   - {fileID: 1038838556, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
   - {fileID: 924915642, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
   - {fileID: -1607573977, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
@@ -200,7 +224,11 @@ SpriteAtlas:
   - {fileID: 664570001, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
   - {fileID: -1259761655, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
   - {fileID: -1763663036, guid: b90b3e3ea0b11334e9690f5db7983015, type: 3}
+  - {fileID: 996711285, guid: 4d3c02bedb6ae9846a85a52803c5ace4, type: 3}
   m_PackedSpriteNamesToIndex:
+  - restart_btn_0
+  - btn_bg_3_0
+  - field_bg_0
   - card_h_9
   - card_h_8
   - card_c_q
@@ -255,6 +283,7 @@ SpriteAtlas:
   - card_h_6
   - card_h_3
   - card_h_2
+  - panel_bg_0
   m_RenderDataMap: {}
-  m_Tag: CardsAtlas
+  m_Tag: SpriteAtlas
   m_IsVariant: 0
