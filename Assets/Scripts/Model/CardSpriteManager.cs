@@ -2,15 +2,19 @@ using UnityEngine;
 
 public class CardSpriteManager : MonoBehaviour
 {
+    [Tooltip("Sprites of the Spades siutes (must be arranged in ascending order)")]
     public Sprite[] SpadesSprites;
+    [Tooltip("Sprites of the Hearts siutes (must be arranged in ascending order)")]
     public Sprite[] HeartsSprites;
+    [Tooltip("Sprites of the Clubs siutes (must be arranged in ascending order)")]
     public Sprite[] ClubsSprites;
+    [Tooltip("Sprites of the Diamonds siutes (must be arranged in ascending order)")]
     public Sprite[] DiamondsSprites;
 
     public Sprite BackSideSprite;
 
     /// <summary>
-    /// Установка страйта в зависсимости от параметров модели карты
+    /// Установка спрайта в зависимости от параметров модели карты
     /// </summary>
     public void UpdateView(Card cardModel, CardView cardView)
     {

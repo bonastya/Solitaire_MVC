@@ -25,8 +25,8 @@ public class UIController : MonoBehaviour
         restartButton.onClick.AddListener(fieldController.RestartLevel);
         failPanelRestartButton.onClick.AddListener(fieldController.RestartLevel);
         winPanelRestartButton.onClick.AddListener(fieldController.RestartLevel);
-
         endMovesPanelFailButton.onClick.AddListener(FailGame);
+
         StartGame();
     }
 

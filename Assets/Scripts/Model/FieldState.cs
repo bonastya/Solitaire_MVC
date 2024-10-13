@@ -21,12 +21,12 @@ public class FieldState
     public List<List<(CardValue, CardSuit)>> CardCombinations { get; private set; }   
 
     /// <summary>
-    /// Колличество каррт на поле в начале (без учёта карт банка)
+    /// Количество карт на поле в начале (без учёта карт банка)
     /// </summary>
     public int CardsNumber { get;  set; }
 
     /// <summary>
-    /// Текущее колличество карт на поле (без учёта карт банка)
+    /// Текущее количество карт на поле (без учёта карт банка)
     /// </summary>
     public int CurrentFieldCardsNumber { get;  set; }
 
@@ -36,7 +36,7 @@ public class FieldState
     public List<Card> Bank { get; private set; }
 
     /// <summary>
-    /// Текущее колличество карт в банке
+    /// Текущее количество карт в банке
     /// </summary>
     public int CurrentBankCardsNumber { get;  set; }
 

@@ -30,7 +30,7 @@ public class CardController
     }
 
     /// <summary>
-    /// Установка страйта в зависсимости от параметров модели карты
+    /// Установка спрайта в зависимости от параметров модели карты
     /// </summary>
     public void UpdateView(Card cardModel)
     {
@@ -111,10 +111,9 @@ public class CardController
     public void UnlockParentBankCard(Card card)
     {
         // Карта банка становится доступна для нажатия 
-        var parent = card.Parent;
-        if(parent != null)
+        if(card.Parent != null)
         {
-            parent.CardView.cardButton.enabled = true;
+            card.Parent.CardView.cardButton.enabled = true;
         }
         
     }

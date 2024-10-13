@@ -58,10 +58,10 @@ public class FieldController : MonoBehaviour
         StartLevel();
     }
 
-    #region level life cycle
+    #region level lifecycle
     public void RestartLevel()
     {
-        // Отчистка банка кард
+        // Очистка банка карт
         foreach (var card in fieldState.Bank) 
         {
             cardController.Remove(card);
@@ -84,13 +84,13 @@ public class FieldController : MonoBehaviour
     {
         MakeGameCombinations();
         DistributeCombinationsToCardsGroups();
-        SpavnBankCards();
+        SpawnBankCards();
         AnimateCards();
         uiController.StartGame();
 
         fieldState.CurrentFieldCardsNumber = fieldState.CardsNumber;
     }
-    #endregion level life cycle
+    #endregion level lifecycle
 
     #region end of game checking
     private void CheckIfGameEnd()
@@ -100,7 +100,7 @@ public class FieldController : MonoBehaviour
     }
     private bool CheckIfGameWin()
     {
-        // Если не остталось карт на поле
+        // Если не осталось карт на поле
         if (fieldState.CurrentFieldCardsNumber==0)
         {
             uiController.WinGame();
@@ -162,8 +162,8 @@ public class FieldController : MonoBehaviour
     }
     #endregion user inputs
 
-    #region cards displaying to start
-    private void SpavnBankCards()
+    #region cards views preparing 
+    private void SpawnBankCards()
     {
         fieldState.CurrentBankCardsNumber = fieldState.Bank.Count();
 
@@ -203,20 +203,20 @@ public class FieldController : MonoBehaviour
         // Верхние карты каждой группы переворачиваются и записываются
         foreach (List<Card> group in fieldState.CardGroups)
         {
-            cardController.UnlockCardWithAnim(group.Last());
-            fieldState.TopCardsInGroups.Add(group.Last());
+            cardController.UnlockCardWithAnim(group.Last()); // перевернуть карту
+            fieldState.TopCardsInGroups.Add(group.Last()); // записать в список верхних карт
         }
-        BankInput(fieldState.currentCard);
+        BankInput(fieldState.currentCard); // открывается первая карта банка
     }
 
-    #endregion cards displaying to start
+    #endregion cards views preparing 
 
     #region make level
     private void MakeGameCombinations()
     {
         int distributedCards = 0;         // распределенные карты (прибавляется после распределения каждой последовательности)
 
-        int combinationLength = 0;        // длинна комбинации от 2 до 7 (от MIN_COMB до MAX_COMB)
+        int combinationLength = 0;        // длина комбинации от 2 до 7 (от MIN_COMB до MAX_COMB)
         int combinationDirection = 1;     // направление комбинации (65%)вверх(INC_COMB)(1), (35%) вниз (-1)
         bool directionChange = false;     // будет ли изменение направления
         int directionChangeCard = 0;      // на какой карте изменяется направление
@@ -229,7 +229,7 @@ public class FieldController : MonoBehaviour
         while (distributedCards < fieldState.CardsNumber)
         {
             // Определение параметров комбинации
-            // Длинна от MIN_COMB до MAX_COMB или сколько осталось
+            // Длина от MIN_COMB до MAX_COMB или сколько осталось
             combinationLength = UnityEngine.Random.Range(GameDesignData.MIN_COMB, Math.Min(GameDesignData.MAX_COMB+1, fieldState.CardsNumber-distributedCards+1));
 
             // Направление вверх с вероятностью INC_COMB

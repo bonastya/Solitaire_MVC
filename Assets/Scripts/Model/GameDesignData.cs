@@ -48,7 +48,7 @@ public static class GameDesignData
     public const float ANIM_OPEN_BANK_DURATION = 0.5f;
 
     /// <summary>
-    /// Смещение карты банка.
+    /// Смещение карты банка
     /// </summary>
     public const float BANK_CARD_OFFSET = 50f;
 
@@ -64,14 +64,14 @@ public static class GameDesignData
 
     public static CardValue GetNextCardValue(CardValue cardValue)
     {
-        // Следующее значение, если остаток от деления на колличество - 0, то берём первый элемент
+        // Следующее значение, если остаток от деления на количество - 0, то берём первый элемент
         return (CardValue)(((int)cardValue + 1) % CardValuesNumber);
 
     }
 
     public static CardValue GetPreviousCardValue(CardValue cardValue)
     {
-        // Предыдущее значение, в случае 0 будет взято CardValuesNumber-1, т е последнее
+        // Предыдущее значение, в случае 0 будет взято CardValuesNumber - 1, т е последнее
         return (CardValue)(((int)cardValue - 1 + CardValuesNumber) % CardValuesNumber);
 
     }

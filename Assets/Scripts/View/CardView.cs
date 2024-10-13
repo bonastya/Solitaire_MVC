@@ -59,8 +59,7 @@ public class CardView : MonoBehaviour
 
         DOTween.Init();
         // Перемещение
-        Sequence mySequence = DOTween.Sequence();
-        mySequence.Append(gameObject.transform.DOMove(combinationPlace.position, time));
+        gameObject.transform.DOMove(combinationPlace.position, time);
         // С поворотом
         OpenCard(() => Complete());
     }
@@ -69,12 +68,12 @@ public class CardView : MonoBehaviour
     {
         float time = GameDesignData.ANIM_OPEN_CARD_DURATION;
         DOTween.Init();
-        Sequence mySequence = DOTween.Sequence();
+        Sequence sequence = DOTween.Sequence();
 
         // Карточка открывается в середине анимации
-        mySequence.Insert(0.0f, gameObject.transform.DORotate(new Vector3(0, -90, 0), time / 2).SetEase(Ease.Linear)); // на бок
-        mySequence.Insert(time / 2, gameObject.transform.DORotate(new Vector3(0, 0, 0), time / 2).SetEase(Ease.Linear)); // и обратно
-        mySequence.InsertCallback(time / 2, () => Complete());
+        sequence.Insert(0.0f, gameObject.transform.DORotate(new Vector3(0, -90, 0), time / 2).SetEase(Ease.Linear)); // на бок
+        sequence.Insert(time / 2, gameObject.transform.DORotate(new Vector3(0, 0, 0), time / 2).SetEase(Ease.Linear)); // и обратно
+        sequence.InsertCallback(time / 2, () => Complete());
 
     }
 
@@ -83,12 +82,12 @@ public class CardView : MonoBehaviour
         float time = GameDesignData.ANIM_SPAWN_CARDS_DURATION;
 
         DOTween.Init();
-        Sequence mySequence = DOTween.Sequence();
+        Sequence sequence = DOTween.Sequence();
 
-        mySequence.Append(gameObject.transform.DOMove(fromPosition.position, 0)); // из начальной точки
-        mySequence.Append(gameObject.transform.DOMove(startPosition, time)); // на свою позицию
-        
-        mySequence.InsertCallback(time, () => Complete());
+        sequence.Append(gameObject.transform.DOMove(fromPosition.position, 0)); // из начальной точки
+        sequence.Append(gameObject.transform.DOMove(startPosition, time)); // на свою позицию
+
+        sequence.InsertCallback(time, () => Complete());
 
     }
 

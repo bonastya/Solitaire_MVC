@@ -174,7 +174,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &49116666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,7 +398,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &124308611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -700,7 +698,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &393170623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -882,7 +879,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &623072047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1168,7 +1164,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5454bf331f95ca640b4ac174f49f845a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cards:
+  gameField: {fileID: 1358176667}
+  bankPanel: {fileID: 1032775199}
+  combinationPanel: {fileID: 1387469882}
+  cardsTransforms:
   - {fileID: 1119555841}
   - {fileID: 393170621}
   - {fileID: 1361497836}
@@ -1181,13 +1180,7 @@ MonoBehaviour:
   - {fileID: 124308609}
   - {fileID: 654689990}
   - {fileID: 1794626967}
-  fieldState:
-    IFcardsPositionedCorrectly: 0
   cardPrefab: {fileID: 5363933356124938880, guid: 032ba18721e7c1f4893c1f3e2e85f914, type: 3}
-  gameField: {fileID: 1358176667}
-  bankPanel: {fileID: 1032775199}
-  combinationPanel: {fileID: 1387469882}
-  cardOffset: 50
   cardsSpavnPosition: {fileID: 1472074330}
 --- !u!114 &728738825
 MonoBehaviour:
@@ -1661,7 +1654,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &948782787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2037,7 +2029,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &1119555843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2127,7 +2118,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &1126213097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2336,7 +2326,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &1361497838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2501,7 +2490,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &1449279947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2550,7 +2538,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1472074330}
   m_Layer: 5
-  m_Name: CardSpavn
+  m_Name: CardSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3003,7 +2991,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &1794626969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3264,7 +3251,7 @@ GameObject:
   - component: {fileID: 1918411072}
   - component: {fileID: 1918411071}
   m_Layer: 5
-  m_Name: Image
+  m_Name: BGImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3512,7 +3499,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardButton: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &2091197600
 MonoBehaviour:
   m_ObjectHideFlags: 0
