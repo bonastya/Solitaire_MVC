@@ -46,8 +46,9 @@ public class CardView : MonoBehaviour
     #region animations
     public void GoToCombinationPlace(Transform combinationPlace, Action Complete)
     {
+        float time = GameDesignData.ANIM_MOVE_CARDS_DURATION;
         DOTween.Init();
-        gameObject.transform.DOMove(combinationPlace.position,1).OnComplete(()=> Complete());
+        gameObject.transform.DOMove(combinationPlace.position, time).OnComplete(()=> Complete());
         gameObject.transform.SetAsLastSibling();
 
     }

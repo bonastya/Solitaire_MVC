@@ -38,6 +38,11 @@ public static class GameDesignData
     public const float ANIM_SPAWN_CARDS_DURATION = 3f;
 
     /// <summary>
+    /// ѕродолжительность анимации по€влени€ карт
+    /// </summary>
+    public const float ANIM_MOVE_CARDS_DURATION = 0.5f;
+
+    /// <summary>
     /// ѕродолжительность анимации открыти€ карты
     /// </summary>
     public const float ANIM_OPEN_CARD_DURATION = 0.2f;
