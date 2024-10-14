@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Вспомогательный контроллер, операции с отображением карты - анимации, доступность, изменение, создание, удаление
 /// </summary>
-public class CardController : MonoBehaviour
+public class CardController
 {
 
     public CardSpriteManager cardSpriteManager;

@@ -93,8 +93,10 @@ public class FieldController : MonoBehaviour
     #endregion level lifecycle
 
     #region end of game checking
-    private void CheckIfGameEnd()
+    private IEnumerator CheckIfGameEnd(float waitTime)
     {
+        // Проверка проходит через время, когда карточки разлетятся на свои места
+        yield return new WaitForSeconds(waitTime);
         if(!CheckIfGameWin())
             CheckIfGameFail();
     }
@@ -148,7 +150,7 @@ public class FieldController : MonoBehaviour
             cardController.AnimateToCombinationPlace(card, combinationPanel);
             fieldState.CurrentFieldCardsNumber--;
 
-            CheckIfGameEnd();
+            StartCoroutine(CheckIfGameEnd(GameDesignData.ANIM_MOVE_CARDS_DURATION));
         }
     }
 
@@ -158,7 +160,8 @@ public class FieldController : MonoBehaviour
         cardController.UnlockParentBankCard(card);
         cardController.AnimateBankToCombinationPlace(card, combinationPanel);
         fieldState.CurrentBankCardsNumber--;
-        CheckIfGameEnd();
+
+        StartCoroutine(CheckIfGameEnd(GameDesignData.ANIM_MOVE_CARDS_DURATION));
     }
     #endregion user inputs
 
