@@ -48,11 +48,6 @@ public static class GameDesignData
     public const float ANIM_OPEN_CARD_DURATION = 0.2f;
 
     /// <summary>
-    /// Продолжительность анимации открытия карт банка
-    /// </summary>
-    public const float ANIM_OPEN_BANK_DURATION = 0.5f;
-
-    /// <summary>
     /// Смещение карты банка
     /// </summary>
     public const float BANK_CARD_OFFSET = 20f;

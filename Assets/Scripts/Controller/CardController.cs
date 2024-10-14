@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Вспомогательный контроллер, операции с отображением карты - анимации, доступность, изменение, создание, удаление
 /// </summary>
-public class CardController 
+public class CardController : MonoBehaviour
 {
 
     public CardSpriteManager cardSpriteManager;
@@ -53,7 +53,6 @@ public class CardController
     }
 
 
-
     #endregion main actions with view
 
     #region to combination place animations and callbacks
@@ -72,6 +71,8 @@ public class CardController
         // Перемещение карточки в иерархии, отключение нажатия
         cardView.gameObject.transform.SetParent(combinationPanel);
         cardView.cardButton.enabled = false;
+        cardView.gameObject.transform.SetAsLastSibling();
+
     }
 
     /// <summary>
@@ -79,15 +80,15 @@ public class CardController
     /// </summary>
     public void AnimateBankToCombinationPlace(Card card, Transform combinationPanel)
     {
-        card.CardView.GoToCombinationPlaceBank(combinationPanel, () => SendBankCardToCombinationPlace(card, combinationPanel));
+        card.CardView.GoToCombinationPlaceBank(combinationPanel, () => SendBankCardToCombinationPlace(card, combinationPanel), () => UnlockCard(card));
     }
 
     public void SendBankCardToCombinationPlace(Card card, Transform combinationPanel)
     {
-        card.CardView.gameObject.transform.SetParent(combinationPanel); 
+        card.CardView.gameObject.transform.SetParent(combinationPanel);
         UnlockCard(card);
         card.CardView.cardButton.enabled = false;
-
+        card.CardView.gameObject.transform.SetAsLastSibling();
     }
 
     #endregion to combination place animations and callbacks

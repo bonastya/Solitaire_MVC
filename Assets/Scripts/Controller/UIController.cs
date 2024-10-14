@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,12 +23,13 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
-        restartButton.onClick.AddListener(fieldController.RestartLevel);
+        restartButton.onClick.AddListener(RestartLevel);
         failPanelRestartButton.onClick.AddListener(fieldController.RestartLevel);
         winPanelRestartButton.onClick.AddListener(fieldController.RestartLevel);
         endMovesPanelFailButton.onClick.AddListener(FailGame);
 
         StartGame();
+        StartCoroutine(RestartUnable());
     }
 
     public void StartGame()
@@ -50,6 +52,20 @@ public class UIController : MonoBehaviour
     public void EndMoves()
     {
         endMovesPanel.SetActive(true);
+    }
+
+    private void RestartLevel()
+    {
+        fieldController.RestartLevel();
+        StartCoroutine(RestartUnable());
+    }
+
+    private IEnumerator RestartUnable()
+    {
+        //  нопка перезапуска не доступна после нажати€ до начала уровн€
+        restartButton.enabled = false;
+        yield return new WaitForSeconds(GameDesignData.ANIM_SPAWN_CARDS_DURATION + GameDesignData.ANIM_OPEN_CARD_DURATION);
+        restartButton.enabled = true;
     }
 
 

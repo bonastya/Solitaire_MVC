@@ -53,29 +53,27 @@ public class CardView : MonoBehaviour
 
     }
 
-    public void GoToCombinationPlaceBank(Transform combinationPlace, Action Complete)
+    public void GoToCombinationPlaceBank(Transform combinationPlace, Action Complete, Action Open)
     {
-        float time = GameDesignData.ANIM_OPEN_BANK_DURATION;
-        gameObject.transform.SetAsLastSibling();
+        float time = GameDesignData.ANIM_MOVE_CARDS_DURATION;
 
         DOTween.Init();
         // Перемещение
-        gameObject.transform.DOMove(combinationPlace.position, time);
+        gameObject.transform.DOMove(combinationPlace.position, time).OnComplete(() => Complete());
         // С поворотом
-        OpenCard(() => Complete());
+        OpenCard(() => Open());
     }
 
-    public void OpenCard( Action Complete)
+    public void OpenCard(Action Open)
     {
         float time = GameDesignData.ANIM_OPEN_CARD_DURATION;
         DOTween.Init();
         Sequence sequence = DOTween.Sequence();
 
         // Карточка открывается в середине анимации
-        sequence.Insert(0.0f, gameObject.transform.DORotate(new Vector3(0, -90, 0), time / 2).SetEase(Ease.Linear)); // на бок
-        sequence.Insert(time / 2, gameObject.transform.DORotate(new Vector3(0, 0, 0), time / 2).SetEase(Ease.Linear)); // и обратно
-        sequence.InsertCallback(time / 2, () => Complete());
-
+        sequence.Insert(0.0f, gameObject.transform.DORotate(new Vector3(0, -90, 0), time / 2f).SetEase(Ease.Linear)); // на бок
+        sequence.Insert(time / 2f, gameObject.transform.DORotate(new Vector3(0, 0, 0), time / 2f).SetEase(Ease.Linear)); // и обратно
+        sequence.InsertCallback(time / 2f, () => Open());
     }
 
     public void GoToStartPosition(Transform fromPosition, Action Complete) 
